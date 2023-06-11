@@ -6,29 +6,38 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_curve, roc_auc_score, auc
 
-df = pd.read_csv('heart.csv')
+df = pd.read_csv('advertising.csv')
+
 # print(df.head())
+#
+# print(df.info())
+# print(df.describe())
 
-# sns.countplot(data=df,x='target')
+# sns.histplot(data=df,x='Age'])
 # plt.show()
 
-# sns.pairplot(df[['age','trestbps','chol','thalach','target']],hue='target')
+# sns.jointplot(data=df,x='Age',y='Area Income')
 # plt.show()
 
-# sns.heatmap(df.corr(),annot=True)
+# sns.jointplot(data=df,x='Age',y='Daily Time Spent on Site',color='green',kind='kde')
 # plt.show()
 
-X = df.drop('target', axis=1)
-y = df['target']
+# sns.jointplot(data=df,x='Daily Time Spent on Site',y='Daily Internet Usage')
+# plt.show()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# sns.pairplot(data=df,hue='Clicked on Ad')
+# plt.show()
+
+X = df.loc[:, ['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Male']]
+y = df['Clicked on Ad']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 model = LogisticRegression()
-model.fit(X_train, y_train)
+model.fit(X_train,y_train)
 
 y_pred = model.predict(X_test)
 
@@ -39,7 +48,6 @@ print(confusion_matrix(y_test, y_pred))
 fpr, tpr, thresholds = roc_curve(y_test, y_pred)
 
 auc = roc_auc_score(y_test, y_pred)
-print("AUC-ROC: {:.3f}".format(auc))
 
 auc_score = roc_auc_score(y_test, y_pred)
 
